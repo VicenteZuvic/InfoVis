@@ -1,0 +1,827 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>¿Le ganas al animal?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<style>
+  :root{
+    --ground:#111318;
+    --surface:#191c23;
+    --surface-2:#1f232b;
+    --line:#2a2f3a;
+    --line-soft:#21252d;
+    --ink:#edeef2;
+    --ink-2:#a3a8b5;
+    --ink-3:#6e7482;
+    --tierra:#c4821f;
+    --aire:#9b7bf0;
+    --agua:#1f97a6;
+    --tu:#e85d75;
+    --track:#15181e;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:var(--ground);
+    color:var(--ink);
+    font-family:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding-inline:20px;padding-block:0 64px}
+  h1,h2,h3{margin:0;text-wrap:balance}
+  .display{font-family:"Anton",Impact,"Arial Narrow",sans-serif;font-weight:400;letter-spacing:.01em;text-transform:uppercase}
+  .mono{font-family:"Space Mono",ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
+  .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+
+  /* ---------- hero ---------- */
+  .hero{padding-block:48px 28px;border-bottom:1px solid var(--line)}
+  .hero h1{font-size:clamp(42px,9vw,86px);line-height:.92;margin-block:14px 0}
+  .hero h1 em{font-style:normal;color:var(--tu)}
+  .lead{color:var(--ink-2);max-width:56ch;margin-block:16px 0;font-size:16px}
+  .stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .stat{flex:1 1 150px;background:var(--surface);border:1px solid var(--line-soft);border-radius:3px;padding:12px 14px}
+  .stat .k{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+  .stat .v{font-family:"Space Mono",monospace;font-variant-numeric:tabular-nums;font-size:21px;font-weight:700;margin-top:4px;line-height:1.1}
+  .stat .u{font-size:12px;color:var(--ink-2);margin-top:2px}
+
+  section{padding-block:40px;border-bottom:1px solid var(--line)}
+  section:last-of-type{border-bottom:0}
+  .sec-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+  .sec-head h2{font-size:clamp(24px,4.4vw,34px)}
+  .sec-note{color:var(--ink-2);max-width:62ch;margin-block:8px 22px;font-size:14.5px}
+
+  /* ---------- controls ---------- */
+  .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:20px}
+  button,select{font-family:inherit;font-size:13px;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:3px;padding:8px 13px;cursor:pointer}
+  button:hover,select:hover{border-color:var(--ink-3)}
+  button:focus-visible,select:focus-visible,.chip:focus-visible,.row:focus-visible{outline:2px solid var(--tu);outline-offset:2px}
+  .btn-go{background:var(--tu);border-color:var(--tu);color:#15070b;font-weight:700;padding:9px 20px;letter-spacing:.02em}
+  .btn-go:hover{filter:brightness(1.1)}
+  .btn-go[disabled]{opacity:.45;cursor:default;filter:none}
+  .chip{font-family:inherit;font-size:12.5px;background:transparent;border:1px solid var(--line);color:var(--ink-2);border-radius:99px;padding:5px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+  .chip .dot{width:9px;height:9px;border-radius:2px;background:currentColor;flex:none}
+  .chip[aria-pressed="true"]{color:var(--ink);border-color:currentColor;background:var(--surface-2)}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+  .seg button{border:0;border-radius:0;background:transparent;padding:8px 14px;color:var(--ink-3)}
+  .seg button[aria-pressed="true"]{background:var(--surface-2);color:var(--ink);font-weight:600}
+  .spacer{flex:1 1 auto}
+
+  /* ---------- pista ---------- */
+  .lanes{background:var(--track);border:1px solid var(--line-soft);border-radius:4px;padding:10px 26px 12px 12px;position:relative;overflow:hidden}
+  .finish{position:absolute;top:0;bottom:0;right:7px;width:5px;background:repeating-linear-gradient(0deg,var(--ink-3) 0 6px,transparent 6px 12px);opacity:.5}
+  .lane{display:grid;grid-template-columns:minmax(0,1fr);gap:2px;padding-block:7px;border-bottom:1px dashed var(--line-soft)}
+  .lane:last-child{border-bottom:0}
+  .lane-top{display:flex;align-items:baseline;gap:8px;font-size:12.5px;color:var(--ink-2);min-width:0}
+  .lane-name{color:var(--ink);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lane-time{margin-left:auto;font-family:"Space Mono",monospace;font-variant-numeric:tabular-nums;font-size:12px;color:var(--ink-3);white-space:nowrap}
+  .lane-track{position:relative;height:26px}
+  .lane-rule{position:absolute;left:0;right:0;top:50%;height:1px;background:var(--line-soft)}
+  .runner{position:absolute;top:50%;left:0;transform:translate(0,-50%);font-size:20px;line-height:1;will-change:transform;filter:drop-shadow(0 0 6px rgba(0,0,0,.6))}
+  .clockbar{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .clockbar .lbl{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+  .clockbar .val{font-family:"Space Mono",monospace;font-variant-numeric:tabular-nums;font-size:26px;font-weight:700}
+  .hint{font-size:13px;color:var(--ink-3);margin-top:12px}
+
+  /* ---------- tu turno ---------- */
+  .duel{display:grid;grid-template-columns:1fr;gap:18px}
+  @media(min-width:680px){.duel{grid-template-columns:minmax(0,260px) minmax(0,1fr);align-items:start}}
+  .modes{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:18px}
+  @media(min-width:680px){.modes{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  .mode{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;gap:2px 10px;text-align:left;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:3px;align-items:center}
+  .mode .mi{font-size:18px;grid-row:span 2;align-self:start}
+  .mode .mt{font-weight:700;font-size:14px;color:var(--ink-2)}
+  .mode .md{font-size:12px;color:var(--ink-3);line-height:1.35}
+  .mode[aria-pressed="true"]{border-color:var(--tu);background:var(--surface-2)}
+  .mode[aria-pressed="true"] .mt{color:var(--ink)}
+  .tapbox{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:18px;text-align:center}
+  .live-read{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line-soft)}
+  .live-read>div{display:flex;flex-direction:column;gap:1px}
+  .live-read .lk{font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+  .live-read .lv{font-size:24px;font-weight:700;line-height:1.05}
+  .live-read .lu{font-size:11px;color:var(--ink-3)}
+  .stride{display:block;margin-top:14px;font-size:12px;color:var(--ink-3);text-align:left}
+  .stride b{color:var(--ink-2)}
+  .stride input{width:100%;margin-top:6px;accent-color:var(--tu)}
+  .status{font-size:12px;line-height:1.4;color:var(--ink-3);margin:12px 0 0;text-align:left;min-height:1em}
+  .status.warn{color:var(--tierra)}
+  .tapbtn{width:100%;padding:26px 12px;font-family:"Anton",Impact,sans-serif;font-size:26px;letter-spacing:.03em;text-transform:uppercase;background:var(--surface-2);border:1px dashed var(--line);color:var(--ink);border-radius:3px;touch-action:manipulation;user-select:none}
+  .tapbtn.live{background:var(--tu);color:#15070b;border-style:solid;border-color:var(--tu)}
+  .tapmeta{display:flex;justify-content:space-between;gap:10px;margin-top:12px;font-family:"Space Mono",monospace;font-variant-numeric:tabular-nums;font-size:12.5px;color:var(--ink-3)}
+  .verdict{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--tu);border-radius:3px;padding:18px}
+  .verdict .big{font-family:"Space Mono",monospace;font-variant-numeric:tabular-nums;font-size:34px;font-weight:700;line-height:1.05}
+  .verdict .beat{margin-top:12px;font-size:14px;color:var(--ink-2)}
+  .verdict ul{margin:10px 0 0;padding-left:18px;font-size:13.5px;color:var(--ink-2)}
+  .verdict li{margin-block:3px}
+
+  /* ---------- ranking ---------- */
+  .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--ink-2);margin-bottom:14px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:12px;height:12px;border-radius:2px;display:inline-block}
+  .axis{display:grid;position:relative;height:18px;margin-left:var(--namecol);font-size:10.5px;color:var(--ink-3);font-family:"Space Mono",monospace}
+  .tick{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+  .bars{--namecol:152px;position:relative}
+  @media(max-width:560px){.bars{--namecol:112px}}
+  .grid{position:absolute;left:var(--namecol);right:56px;top:0;bottom:0;pointer-events:none}
+  .gline{position:absolute;top:0;bottom:0;width:1px;background:var(--line-soft)}
+  .row{display:grid;grid-template-columns:var(--namecol) minmax(0,1fr) 56px;align-items:center;gap:0;height:25px;position:relative;cursor:pointer;background:none;border:0;padding:0;width:100%;text-align:left;font:inherit;color:inherit}
+  .row:hover .nm,.row.on .nm{color:var(--ink)}
+  .row:hover .vl,.row.on .vl{color:var(--ink)}
+  .nm{font-size:12.5px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:10px;display:flex;align-items:center;gap:6px}
+  .nm .em{font-size:13px;flex:none}
+  .plot{position:relative;height:13px}
+  .fill{position:absolute;left:0;top:0;height:100%;border-radius:0 4px 4px 0;min-width:3px;transition:width .35s cubic-bezier(.2,.7,.3,1)}
+  .row.on .fill{box-shadow:0 0 0 2px var(--ground),0 0 0 3px var(--ink)}
+  .vl{font-family:"Space Mono",monospace;font-variant-numeric:tabular-nums;font-size:11.5px;color:var(--ink-3);text-align:right;padding-left:8px}
+  .callout{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--tierra);border-radius:3px;padding:14px 16px;font-size:13.5px;color:var(--ink-2)}
+  .callout b{color:var(--ink)}
+  .empty{color:var(--ink-3);font-size:13.5px;padding:20px 0}
+
+  /* ---------- tabla + notas ---------- */
+  details{border:1px solid var(--line);border-radius:3px;background:var(--surface);margin-top:8px}
+  summary{cursor:pointer;padding:12px 16px;font-size:13.5px;font-weight:600;list-style:none}
+  summary::-webkit-details-marker{display:none}
+  summary::before{content:"▸ ";color:var(--ink-3)}
+  details[open] summary::before{content:"▾ "}
+  .tablewrap{overflow-x:auto;padding:0 16px 16px}
+  table{border-collapse:collapse;width:100%;font-size:12.5px;min-width:440px}
+  th,td{text-align:left;padding:6px 10px 6px 0;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+  th{color:var(--ink-3);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+  td.n{font-family:"Space Mono",monospace;font-variant-numeric:tabular-nums;text-align:right;padding-right:16px}
+
+  .steps{display:grid;gap:12px;margin-top:6px;counter-reset:s}
+  @media(min-width:760px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .step{background:var(--surface);border:1px solid var(--line-soft);border-radius:3px;padding:14px 16px;position:relative}
+  .step .n{font-family:"Space Mono",monospace;font-size:11px;color:var(--tu);font-weight:700;letter-spacing:.1em}
+  .step h3{font-size:15px;margin-top:6px}
+  .step p{margin:6px 0 0;font-size:13.5px;color:var(--ink-2)}
+  .map{margin-top:8px;font-size:13.5px;color:var(--ink-2)}
+  .map dt{font-weight:600;color:var(--ink);margin-top:10px;font-size:13px}
+  .map dd{margin:2px 0 0}
+  footer{padding-block:34px 0;font-size:12.5px;color:var(--ink-3);border-top:1px solid var(--line)}
+  footer a{color:var(--ink-2)}
+
+  @media (prefers-reduced-motion:reduce){
+    .fill{transition:none}
+  }
+</style>
+<style>
+  :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  img{max-width:100%} [hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">IIC2026 · Visualización de información · Prototipo</p>
+    <h1 class="display">¿Le ganas<br>al <em>animal</em>?</h1>
+    <p class="lead">Cuarenta y tres animales, una pista y un rango de velocidades tan absurdo que no cabe en un gráfico normal. Córrelos, escúchalos y después intenta ganarle a alguno.</p>
+    <div class="stats">
+      <div class="stat"><div class="k">Animales</div><div class="v">43</div><div class="u">tierra, aire y agua</div></div>
+      <div class="stat"><div class="k">El más lento</div><div class="v">0,048</div><div class="u">km/h · caracol 🐌</div></div>
+      <div class="stat"><div class="k">El más rápido</div><div class="v">389</div><div class="u">km/h · halcón en picada 🦅</div></div>
+      <div class="stat"><div class="k">Diferencia</div><div class="v">8.104×</div><div class="u">el problema del gráfico</div></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="sec-head"><h2 class="display">La pista</h2><p class="eyebrow">Overview</p></div>
+    <p class="sec-note">La carrera está normalizada: el más rápido de la pista cruza la meta en 4,5 segundos de pantalla y el resto avanza en proporción real a su velocidad. El cronómetro marca el tiempo <strong>de verdad</strong>, no el de pantalla.</p>
+    <div class="controls">
+      <button class="btn-go" id="go">▶ Correr</button>
+      <label class="eyebrow" for="dist" style="margin-left:4px">Distancia</label>
+      <select id="dist">
+        <option value="100">100 m</option>
+        <option value="1000" selected>1 km</option>
+        <option value="42195">Maratón · 42,195 km</option>
+      </select>
+      <button id="snd" aria-pressed="true">🔊 Sonido</button>
+      <span class="spacer"></span>
+      <button id="clearlanes">Vaciar pista</button>
+    </div>
+    <div class="lanes" id="lanes"><div class="finish"></div></div>
+    <div class="clockbar"><span class="lbl">Tiempo real transcurrido</span><span class="val mono" id="clock">0,0 s</span></div>
+    <p class="hint">Haz clic en cualquier animal del ranking de abajo para subirlo o bajarlo de la pista (máx. 6).</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2 class="display">Tu turno</h2><p class="eyebrow">Details on demand</p></div>
+    <p class="sec-note">Tres maneras de medirte, de la más honesta a la más tramposa. El celular es el instrumento: el sensor de movimiento cuenta tus pasos igual que una pulsera de actividad, y el GPS mide la velocidad directamente.</p>
+
+    <div class="modes" id="modes">
+      <button class="mode" data-mode="motion" aria-pressed="true">
+        <span class="mi">📱</span><span class="mt">Movimiento</span>
+        <span class="md">Celular en la mano y corre en el lugar. Mide tu cadencia con el acelerómetro.</span>
+      </button>
+      <button class="mode" data-mode="gps" aria-pressed="false">
+        <span class="mi">📍</span><span class="mt">GPS</span>
+        <span class="md">Sal a la calle y corre de verdad. Es la única que mide velocidad real.</span>
+      </button>
+      <button class="mode" data-mode="tap" aria-pressed="false">
+        <span class="mi">⌨️</span><span class="mt">Teclado</span>
+        <span class="md">Sin celular: aprieta espacio. Mide tu dedo, no tus piernas.</span>
+      </button>
+    </div>
+
+    <div class="duel">
+      <div class="tapbox">
+        <button class="tapbtn" id="tap">Medir</button>
+        <div class="tapmeta"><span id="tapCount">— pasos</span><span id="tapTime">10,0 s</span></div>
+        <div class="live-read" id="liveRead">
+          <div><span class="lk" id="lkA">Cadencia</span><span class="lv mono" id="lvA">0,0</span><span class="lu" id="luA">pasos/s</span></div>
+          <div><span class="lk" id="lkB">Ahora</span><span class="lv mono" id="lvB">0,0</span><span class="lu" id="luB">km/h</span></div>
+        </div>
+        <label class="stride" id="strideWrap" for="stride">
+          <span>Zancada supuesta: <b class="mono" id="strideVal">1,80</b> m</span>
+          <input type="range" id="stride" min="0.4" max="2.6" step="0.05" value="1.8">
+        </label>
+        <p class="status" id="status">Correr en el lugar no te mueve del suelo, así que el sensor solo puede darte la <em>cadencia</em>. La velocidad sale de multiplicarla por la zancada que elijas aquí abajo: es una estimación, igual que la de cualquier reloj deportivo.</p>
+      </div>
+      <div class="verdict" id="verdict">
+        <div class="eyebrow">Tu velocidad</div>
+        <div class="big" id="myspeed">— km/h</div>
+        <p class="beat" id="beatmsg">Todavía no te mides. Un adulto trotando anda en 12 km/h; Usain Bolt tocó 44,7 km/h en 2009 y sigue siendo el récord humano.</p>
+        <ul id="beatlist"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2 class="display">El ranking</h2><p class="eyebrow">Filter</p></div>
+    <p class="sec-note">Pasa el mouse por una barra para <strong>escucharla</strong>: el tono sube con la velocidad y los golpes marcan la frecuencia real de zancada del animal. El guepardo da 3,4 pasos por segundo; el caracol, uno cada siete.</p>
+
+    <div class="controls" id="filters">
+      <button class="chip" data-medio="tierra" aria-pressed="true" style="color:var(--tierra)"><span class="dot"></span>Tierra</button>
+      <button class="chip" data-medio="aire" aria-pressed="true" style="color:var(--aire)"><span class="dot"></span>Aire</button>
+      <button class="chip" data-medio="agua" aria-pressed="true" style="color:var(--agua)"><span class="dot"></span>Agua</button>
+      <span class="spacer"></span>
+      <span class="eyebrow">Escala</span>
+      <div class="seg" id="scale">
+        <button data-scale="lin" aria-pressed="true">Lineal</button>
+        <button data-scale="log" aria-pressed="false">Logarítmica</button>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span><i style="background:var(--tierra)"></i> Tierra</span>
+      <span><i style="background:var(--aire)"></i> Aire</span>
+      <span><i style="background:var(--agua)"></i> Agua</span>
+      <span><i style="background:var(--tu)"></i> Tú</span>
+      <span style="color:var(--ink-3)">· en la pista: borde blanco</span>
+    </div>
+
+    <div class="axis" id="axis"></div>
+    <div class="bars" id="bars"><div class="grid" id="grid"></div></div>
+    <p class="empty" id="empty" hidden>No queda ningún animal con esos filtros.</p>
+
+    <div class="callout" id="callout"><b>Escala lineal.</b> El halcón se come todo el ancho y los últimos veinte animales son una raya de un píxel. No es un problema de diseño gráfico: es que 389 y 0,048 no caben en la misma regla. Cambia a logarítmica y mira lo que pasa.</div>
+
+    <details>
+      <summary>Ver los datos en tabla</summary>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Animal</th><th>Medio</th><th>Clase</th><th style="text-align:right">km/h</th><th style="text-align:right">m/s</th><th style="text-align:right">Pasos/s</th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2 class="display">Cómo suena</h2></div>
+    <p class="sec-note">La sonificación usa dos canales a la vez, para que ninguno cargue solo con el dato.</p>
+    <dl class="map">
+      <dt>Tono → velocidad</dt>
+      <dd>La velocidad se mapea en escala logarítmica a cuatro octavas: 80 Hz para el caracol, 1.280 Hz para el halcón. Un animal grave es un animal lento.</dd>
+      <dt>Ritmo → frecuencia de zancada</dt>
+      <dd>Los golpes salen a la cadencia estimada del animal, con <span class="mono">pasos/s ≈ 0,5 · v<sup>0,4</sup></span>. Esa fórmula reproduce bien los valores medidos: guepardo 3,4/s, humano corriendo 2,3/s, perezoso 0,3/s.</dd>
+      <dt>Durante la carrera</dt>
+      <dd>El ritmo se comprime igual para todas las pistas, así que lo que escuchas son las <em>proporciones</em> entre corredores, no su cadencia real.</dd>
+    </dl>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2 class="display">Las cuatro iteraciones</h2></div>
+    <p class="sec-note">El curso evalúa el proceso de diseño, no el brillo final. Esta página es la v3. Cada versión tiene que fallar en algo concreto para que la siguiente tenga sentido.</p>
+    <div class="steps">
+      <div class="step"><div class="n">V1</div><h3>Barras lineales, sin sonido</h3><p>Falla a propósito: veinte animales quedan invisibles. Ese fracaso es la justificación documentada de la v2.</p></div>
+      <div class="step"><div class="n">V2</div><h3>Escala logarítmica</h3><p>Ahora se ven todos, pero se pierde la intuición de "cuánto más rápido". El toggle deja que el lector compare las dos lecturas en vez de esconder el problema.</p></div>
+      <div class="step"><div class="n">V3</div><h3>Pista, sonido y sensores</h3><p>La barra dice cuánto; la pista dice qué se siente. El acelerómetro y el GPS meten al lector adentro del dataset en vez de dejarlo mirando.</p></div>
+      <div class="step"><div class="n">V4</div><h3>Fisicalización (E2)</h3><p>El mismo sensor, pero la salida deja la pantalla: un motor LEGO mueve un corredor de verdad sobre un riel, a velocidad proporcional a la del animal.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Velocidades máximas aproximadas, redondeadas, compiladas de la lista <em>Fastest animals</em> de Wikipedia y del récord de 100 m de la IAAF. Varias son discutidas —el halcón peregrino y el pez vela especialmente—, así que para la entrega conviene citar la medición concreta de cada una.</p>
+  </footer>
+
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  // nombre, km/h, medio, clase, emoji
+  const DATA = [
+    ["Halcón peregrino",389,"aire","ave","🦅"],
+    ["Águila real",320,"aire","ave","🦅"],
+    ["Vencejo real",169,"aire","ave","🐦"],
+    ["Murciélago",160,"aire","mamífero","🦇"],
+    ["Fragata",153,"aire","ave","🐦"],
+    ["Paloma mensajera",148,"aire","ave","🕊️"],
+    ["Pez vela",110,"agua","pez","🐟"],
+    ["Pez espada",97,"agua","pez","🐠"],
+    ["Guepardo",120,"tierra","mamífero","🐆"],
+    ["Berrendo",88,"tierra","mamífero","🦌"],
+    ["Caballo de carrera",88,"tierra","mamífero","🐎"],
+    ["León",80,"tierra","mamífero","🦁"],
+    ["Ñu",80,"tierra","mamífero","🐃"],
+    ["Tiburón mako",74,"agua","pez","🦈"],
+    ["Galgo",74,"tierra","mamífero","🐕"],
+    ["Canguro rojo",71,"tierra","mamífero","🦘"],
+    ["Avestruz",70,"tierra","ave","🐦"],
+    ["Liebre",70,"tierra","mamífero","🐇"],
+    ["Cebra",64,"tierra","mamífero","🦓"],
+    ["Delfín",60,"agua","mamífero","🐬"],
+    ["Jirafa",60,"tierra","mamífero","🦒"],
+    ["Orca",56,"agua","mamífero","🐋"],
+    ["Conejo",56,"tierra","mamífero","🐰"],
+    ["Oso pardo",56,"tierra","mamífero","🐻"],
+    ["Gato doméstico",48,"tierra","mamífero","🐈"],
+    ["Usain Bolt",44.7,"tierra","humano","🏃"],
+    ["Elefante",40,"tierra","mamífero","🐘"],
+    ["Pingüino papúa",36,"agua","ave","🐧"],
+    ["Tortuga marina",35,"agua","reptil","🐢"],
+    ["Abeja",29,"aire","insecto","🐝"],
+    ["Ardilla",20,"tierra","mamífero","🐿️"],
+    ["Mariposa monarca",20,"aire","insecto","🦋"],
+    ["Cocodrilo",17,"tierra","reptil","🐊"],
+    ["Gallina",14,"tierra","ave","🐔"],
+    ["Ratón",13,"tierra","mamífero","🐁"],
+    ["Humano trotando",12,"tierra","humano","🚶"],
+    ["Mosca doméstica",8,"aire","insecto","🪰"],
+    ["Araña",1.9,"tierra","arácnido","🕷️"],
+    ["Hormiga",0.3,"tierra","insecto","🐜"],
+    ["Tortuga terrestre",0.3,"tierra","reptil","🐢"],
+    ["Perezoso",0.27,"tierra","mamífero","🦥"],
+    ["Estrella de mar",0.09,"agua","equinodermo","⭐"],
+    ["Caracol",0.048,"tierra","molusco","🐌"]
+  ].map(([nombre,kmh,medio,clase,emoji]) => ({nombre,kmh,medio,clase,emoji}))
+   .sort((a,b) => b.kmh - a.kmh);
+
+  const V_MIN = 0.048, V_MAX = 389;
+  const COLOR = {tierra:"#c4821f", aire:"#9b7bf0", agua:"#1f97a6", tu:"#e85d75"};
+
+  // pasos por segundo estimados
+  const stride = v => 0.5 * Math.pow(v, 0.4);
+  // tono: cuatro octavas desde 80 Hz, logarítmico en velocidad
+  const pitch = v => 80 * Math.pow(2, 4 * (Math.log10(Math.max(v,0.001)) - Math.log10(V_MIN)) / (Math.log10(V_MAX) - Math.log10(V_MIN)));
+
+  const nf = (n, d) => n.toLocaleString("es-CL", {minimumFractionDigits:d, maximumFractionDigits:d});
+  const fmtSpeed = v => Number.isInteger(v) ? nf(v,0) : v >= 1 ? nf(v,1) : nf(v,3);
+
+  function fmtTime(s){
+    if (s < 60) return nf(s, s < 10 ? 1 : 0) + " s";
+    if (s < 3600) return Math.floor(s/60) + " min " + nf(s%60,0) + " s";
+    if (s < 86400) return Math.floor(s/3600) + " h " + nf((s%3600)/60,0) + " min";
+    if (s < 86400*365) return nf(s/86400,1) + " días";
+    return nf(s/(86400*365),1) + " años";
+  }
+
+  /* ---------------- audio ---------------- */
+  let ac = null, soundOn = true;
+  function actx(){
+    if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ return null; } }
+    if (ac.state === "suspended") ac.resume();
+    return ac;
+  }
+  function blip(freq, at, dur, vol){
+    const c = actx(); if (!c || !soundOn) return;
+    const t = at ?? c.currentTime;
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = "triangle"; o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol ?? 0.13, t + 0.006);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + (dur ?? 0.07));
+    o.connect(g); g.connect(c.destination);
+    o.start(t); o.stop(t + (dur ?? 0.07) + 0.02);
+  }
+  let previewStop = null;
+  function preview(v){
+    const c = actx(); if (!c || !soundOn) return;
+    if (previewStop) previewStop();
+    const f = pitch(v), now = c.currentTime, LEN = 1.5;
+    // drone: la altura ya lleva el dato aunque no alcance ni un paso
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = "sine"; o.frequency.setValueAtTime(f/2, now);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(0.05, now + 0.05);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + LEN);
+    o.connect(g); g.connect(c.destination); o.start(now); o.stop(now + LEN + 0.05);
+    // golpes a la cadencia real
+    const sps = stride(v), gap = 1 / sps, n = Math.min(Math.floor(LEN / gap) + 1, 24);
+    for (let i = 0; i < n; i++) blip(f, now + i * gap, 0.06, 0.1);
+    previewStop = () => { try { o.stop(); } catch(e){} previewStop = null; };
+  }
+
+  /* ---------------- ranking ---------------- */
+  const barsEl = document.getElementById("bars");
+  const gridEl = document.getElementById("grid");
+  const axisEl = document.getElementById("axis");
+  const emptyEl = document.getElementById("empty");
+  const calloutEl = document.getElementById("callout");
+  const tbody = document.getElementById("tbody");
+
+  let scaleMode = "lin";
+  const medios = new Set(["tierra","aire","agua"]);
+  const lanes = [];           // animales en la pista
+  let me = null;              // {nombre, kmh, ...} del jugador
+
+  const pos = v => scaleMode === "lin"
+    ? v / V_MAX
+    : (Math.log10(Math.max(v, V_MIN)) - Math.log10(V_MIN)) / (Math.log10(V_MAX) - Math.log10(V_MIN));
+
+  function visible(){
+    const list = DATA.filter(d => medios.has(d.medio));
+    return me ? [...list, me].sort((a,b) => b.kmh - a.kmh) : list;
+  }
+
+  function drawAxis(){
+    const ticks = scaleMode === "lin" ? [0,100,200,300,389] : [0.048,0.1,1,10,100,389];
+    axisEl.innerHTML = "";
+    gridEl.innerHTML = "";
+    axisEl.style.marginLeft = getComputedStyle(barsEl).getPropertyValue("--namecol");
+    axisEl.style.marginRight = "56px";
+    axisEl.style.position = "relative";
+    ticks.forEach(t => {
+      const p = (t === 0 ? 0 : pos(t)) * 100;
+      const s = document.createElement("span");
+      s.className = "tick"; s.style.left = p + "%";
+      s.textContent = t === 0 ? "0" : fmtSpeed(t);
+      axisEl.appendChild(s);
+      const g = document.createElement("div");
+      g.className = "gline"; g.style.left = p + "%";
+      gridEl.appendChild(g);
+    });
+  }
+
+  function render(){
+    const list = visible();
+    emptyEl.hidden = list.length > 0;
+    [...barsEl.querySelectorAll(".row")].forEach(r => r.remove());
+    list.forEach(d => {
+      const row = document.createElement("button");
+      row.className = "row" + (lanes.includes(d) ? " on" : "");
+      row.type = "button";
+      row.setAttribute("aria-label", `${d.nombre}, ${fmtSpeed(d.kmh)} kilómetros por hora`);
+      const c = d.tu ? COLOR.tu : COLOR[d.medio];
+      row.innerHTML =
+        `<span class="nm"><span class="em">${d.emoji}</span>${d.nombre}</span>` +
+        `<span class="plot"><span class="fill" style="background:${c};width:${(pos(d.kmh)*100).toFixed(3)}%"></span></span>` +
+        `<span class="vl">${fmtSpeed(d.kmh)}</span>`;
+      row.addEventListener("mouseenter", () => preview(d.kmh));
+      row.addEventListener("focus", () => preview(d.kmh));
+      row.addEventListener("click", () => toggleLane(d));
+      barsEl.appendChild(row);
+    });
+    drawAxis();
+    calloutEl.innerHTML = scaleMode === "lin"
+      ? "<b>Escala lineal.</b> El halcón se come todo el ancho y los últimos veinte animales son una raya de un píxel. No es un problema de diseño gráfico: es que 389 y 0,048 no caben en la misma regla. Cambia a logarítmica y mira lo que pasa."
+      : "<b>Escala logarítmica.</b> Cada marca del eje multiplica por diez en vez de sumar, así que ahora se ven todos. El precio: la barra del guepardo ya no es 2.500 veces la del caracol aunque su velocidad sí lo sea. Ninguna de las dos escalas es la correcta; por eso están las dos.";
+  }
+
+  function fillTable(){
+    tbody.innerHTML = DATA.map(d =>
+      `<tr><td>${d.emoji} ${d.nombre}</td><td>${d.medio}</td><td>${d.clase}</td>` +
+      `<td class="n">${fmtSpeed(d.kmh)}</td><td class="n">${nf(d.kmh/3.6, 2)}</td>` +
+      `<td class="n">${nf(stride(d.kmh), 2)}</td></tr>`).join("");
+  }
+
+  document.getElementById("filters").addEventListener("click", e => {
+    const chip = e.target.closest(".chip[data-medio]");
+    if (!chip) return;
+    const m = chip.dataset.medio, on = chip.getAttribute("aria-pressed") === "true";
+    if (on && medios.size === 1) return;
+    on ? medios.delete(m) : medios.add(m);
+    chip.setAttribute("aria-pressed", String(!on));
+    render();
+  });
+
+  document.getElementById("scale").addEventListener("click", e => {
+    const b = e.target.closest("button[data-scale]"); if (!b) return;
+    scaleMode = b.dataset.scale;
+    [...e.currentTarget.children].forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    render();
+  });
+
+  /* ---------------- pista ---------------- */
+  const lanesEl = document.getElementById("lanes");
+  const clockEl = document.getElementById("clock");
+  const goBtn = document.getElementById("go");
+  const distSel = document.getElementById("dist");
+
+  function toggleLane(d){
+    const i = lanes.indexOf(d);
+    if (i >= 0) lanes.splice(i, 1);
+    else { if (lanes.length >= 6) lanes.shift(); lanes.push(d); }
+    lanes.sort((a,b) => b.kmh - a.kmh);
+    drawLanes(); render();
+  }
+
+  function drawLanes(){
+    [...lanesEl.querySelectorAll(".lane")].forEach(l => l.remove());
+    if (!lanes.length){
+      const p = document.createElement("div");
+      p.className = "lane"; p.innerHTML = '<div class="lane-top" style="color:var(--ink-3)">Pista vacía. Elige animales en el ranking de abajo.</div>';
+      lanesEl.appendChild(p);
+      return;
+    }
+    const D = +distSel.value;
+    lanes.forEach(d => {
+      const el = document.createElement("div");
+      el.className = "lane";
+      el.innerHTML =
+        `<div class="lane-top"><span class="lane-name">${d.nombre}</span>` +
+        `<span class="mono" style="color:${d.tu?COLOR.tu:COLOR[d.medio]}">${fmtSpeed(d.kmh)} km/h</span>` +
+        `<span class="lane-time" data-time>${fmtTime(D / (d.kmh/3.6))}</span></div>` +
+        `<div class="lane-track"><div class="lane-rule"></div><div class="runner">${d.emoji}</div></div>`;
+      lanesEl.appendChild(el);
+    });
+  }
+
+  let raf = null;
+  function race(){
+    if (!lanes.length) return;
+    cancelAnimationFrame(raf);
+    actx();
+    const D = +distSel.value;
+    const vmax = Math.max(...lanes.map(l => l.kmh));
+    const tWin = D / (vmax/3.6);                  // segundos reales del ganador
+    const WALL = 4.5;                             // segundos de pantalla
+    const runners = [...lanesEl.querySelectorAll(".runner")];
+    const tracks  = [...lanesEl.querySelectorAll(".lane-track")];
+    const phases  = lanes.map(() => 0);
+    const start = performance.now();
+    goBtn.disabled = true;
+
+    function frame(now){
+      const el = Math.min((now - start) / 1000, WALL);
+      const p = el / WALL;
+      lanes.forEach((d, i) => {
+        const frac = Math.min(p * (d.kmh / vmax), 1);
+        const w = tracks[i].clientWidth - 24;
+        runners[i].style.transform = `translate(${(frac * w).toFixed(1)}px,-50%)`;
+        // ritmo comprimido: el ganador suena a ~8 golpes/s, el resto en proporción
+        const rate = 8 * Math.sqrt(d.kmh / vmax);
+        phases[i] += rate / 60;
+        if (phases[i] >= 1){ phases[i] -= 1; blip(pitch(d.kmh), null, 0.05, 0.09); }
+      });
+      clockEl.textContent = fmtTime(p * tWin);
+      if (el < WALL) raf = requestAnimationFrame(frame);
+      else { goBtn.disabled = false; blip(pitch(vmax)*1.5, null, 0.3, 0.12); }
+    }
+    raf = requestAnimationFrame(frame);
+  }
+
+  goBtn.addEventListener("click", race);
+  distSel.addEventListener("change", drawLanes);
+  document.getElementById("clearlanes").addEventListener("click", () => { lanes.length = 0; drawLanes(); render(); });
+  document.getElementById("snd").addEventListener("click", e => {
+    soundOn = !soundOn;
+    e.currentTarget.setAttribute("aria-pressed", String(soundOn));
+    e.currentTarget.textContent = soundOn ? "🔊 Sonido" : "🔇 Silencio";
+  });
+
+  /* ---------------- tu turno: sensores ---------------- */
+  const tapBtn   = document.getElementById("tap");
+  const tapCount = document.getElementById("tapCount");
+  const tapTime  = document.getElementById("tapTime");
+  const mySpeedEl= document.getElementById("myspeed");
+  const beatMsg  = document.getElementById("beatmsg");
+  const beatList = document.getElementById("beatlist");
+  const statusEl = document.getElementById("status");
+  const strideWrap = document.getElementById("strideWrap");
+  const strideIn = document.getElementById("stride");
+  const strideVal= document.getElementById("strideVal");
+  const lkA=document.getElementById("lkA"), lvA=document.getElementById("lvA"), luA=document.getElementById("luA");
+  const lkB=document.getElementById("lkB"), lvB=document.getElementById("lvB"), luB=document.getElementById("luB");
+
+  const COPY = {
+    motion: "Correr en el lugar no te mueve del suelo, así que el sensor solo puede darte la <em>cadencia</em>. La velocidad sale de multiplicarla por la zancada que elijas aquí abajo: es una estimación, igual que la de cualquier reloj deportivo.",
+    gps:    "El GPS entrega la velocidad medida por el aparato, sin suposiciones. Necesita cielo abierto y unos segundos para fijar la señal; adentro de una casa no sirve. Nos quedamos con tu máxima.",
+    tap:    "Esto mide la frecuencia de tu dedo, no la de tus piernas. Sirve para probar la página desde el computador, pero no es una medición de nada."
+  };
+  const DUR = {motion: 10, tap: 10, gps: 0};   // 0 = hasta que pares
+
+  let mode = "motion";
+  let running = false, tStart = 0, tick = null;
+  let steps = 0, lastStep = 0, gravEMA = null, above = false, gotMotion = false, motionWatch = null;
+  let gpsId = null, gpsMax = 0, gpsNow = 0, lastFix = null;
+  let strideM = 1.8;
+  let taps = 0;
+
+  const say = (html, warn) => { statusEl.innerHTML = html; statusEl.classList.toggle("warn", !!warn); };
+
+  /* --- acelerómetro: detección de pasos por picos --- */
+  function onMotion(e){
+    const a = e.accelerationIncludingGravity || e.acceleration;
+    if (!a || a.x === null || a.x === undefined) return;
+    gotMotion = true;
+    const mag = Math.hypot(a.x, a.y, a.z);
+    gravEMA = gravEMA === null ? mag : gravEMA * 0.88 + mag * 0.12;   // pasa-altos: saca la gravedad
+    const dyn = mag - gravEMA;
+    const now = performance.now();
+    const TH = 2.2;                                                   // m/s² sobre el reposo
+    if (!above && dyn > TH && now - lastStep > 180){                  // 180 ms = tope de 5,5 pasos/s
+      above = true; steps++; lastStep = now;
+      blip(330 + Math.random()*40, null, 0.045, 0.09);
+    } else if (above && dyn < TH * 0.45){ above = false; }
+  }
+
+  async function askMotion(){
+    if (typeof DeviceMotionEvent === "undefined") return "nosensor";
+    if (typeof DeviceMotionEvent.requestPermission === "function"){
+      try { return (await DeviceMotionEvent.requestPermission()) === "granted" ? "ok" : "denied"; }
+      catch(err){ return "blocked"; }
+    }
+    return "ok";
+  }
+
+  /* --- GPS --- */
+  const R = 6371000;
+  function haversine(a, b){
+    const dLat=(b.lat-a.lat)*Math.PI/180, dLon=(b.lon-a.lon)*Math.PI/180;
+    const la1=a.lat*Math.PI/180, la2=b.lat*Math.PI/180;
+    const h=Math.sin(dLat/2)**2 + Math.cos(la1)*Math.cos(la2)*Math.sin(dLon/2)**2;
+    return 2*R*Math.asin(Math.sqrt(h));
+  }
+  function startGps(){
+    if (!navigator.geolocation){ say("Este navegador no entrega GPS. Prueba con movimiento o teclado.", true); return false; }
+    say("Buscando señal… sal a un lugar despejado y empieza a moverte.");
+    gpsMax = 0; gpsNow = 0; lastFix = null;
+    gpsId = navigator.geolocation.watchPosition(pos => {
+      const c = pos.coords;
+      let v = (typeof c.speed === "number" && !isNaN(c.speed)) ? c.speed : null;  // m/s
+      const fix = {lat:c.latitude, lon:c.longitude, t:pos.timestamp};
+      if (v === null && lastFix){
+        const dt = (fix.t - lastFix.t) / 1000;
+        if (dt > 0.3) v = haversine(lastFix, fix) / dt;
+      }
+      lastFix = fix;
+      if (v !== null && isFinite(v) && v >= 0){
+        gpsNow = v * 3.6;
+        if (gpsNow > gpsMax) gpsMax = gpsNow;
+        say(`Señal fija, precisión ±${nf(c.accuracy || 0, 0)} m. Aprieta “Listo” cuando termines.`);
+      }
+    }, err => {
+      const m = {1:"Le dijiste que no al permiso de ubicación.",2:"No hay señal de GPS disponible.",3:"El GPS tardó demasiado en responder."};
+      say((m[err.code] || "El GPS falló.") + " Prueba con movimiento o teclado.", true);
+      stop(true);
+    }, {enableHighAccuracy:true, maximumAge:0, timeout:12000});
+    return true;
+  }
+
+  /* --- ciclo de medición --- */
+  function setMode(m){
+    if (running) stop(true);
+    mode = m;
+    [...document.getElementById("modes").children].forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === m)));
+    strideWrap.hidden = (m === "gps");
+    lkA.textContent = m === "gps" ? "Máxima" : "Cadencia";
+    luA.textContent = m === "gps" ? "km/h" : (m === "tap" ? "toques/s" : "pasos/s");
+    lkB.textContent = m === "gps" ? "Ahora" : "Equivale a";
+    tapBtn.textContent = "Medir";
+    tapCount.textContent = m === "gps" ? "0,0 km/h máx." : "— pasos";
+    tapTime.textContent = DUR[m] ? nf(DUR[m],1) + " s" : "libre";
+    lvA.textContent = "0,0"; lvB.textContent = "0,0";
+    say(COPY[m]);
+  }
+
+  async function start(){
+    actx();
+    steps = 0; taps = 0; gravEMA = null; above = false; gotMotion = false; lastStep = 0;
+    if (mode === "motion"){
+      const r = await askMotion();
+      if (r === "nosensor"){ say("Este aparato no tiene acelerómetro (o es un computador de escritorio). Usa el modo teclado.", true); return; }
+      if (r === "denied"){ say("Sin permiso no hay sensor. Vuelve a apretar y acepta, o usa GPS/teclado.", true); return; }
+      if (r === "blocked"){ say("El navegador bloqueó el sensor dentro de esta ventana. Abre la página en una pestaña propia, o usa GPS/teclado.", true); return; }
+      window.addEventListener("devicemotion", onMotion);
+      motionWatch = setTimeout(() => {
+        if (!gotMotion){ say("El permiso salió bien pero no llegan datos del sensor: esta página corre dentro de un marco que los filtra. En tu propio sitio (GitHub Pages) va a funcionar. Mientras tanto, usa GPS o teclado.", true); stop(true); }
+      }, 2000);
+      say("Midiendo. Corre en el lugar levantando bien las rodillas, con el celular firme en la mano.");
+    } else if (mode === "gps"){
+      if (!startGps()) return;
+      tapBtn.textContent = "Listo";
+    } else {
+      say("Midiendo. Aprieta espacio o el botón lo más rápido que puedas.");
+    }
+    running = true; tStart = performance.now();
+    tapBtn.classList.add("live");
+    if (mode !== "gps") tapBtn.textContent = "¡Dale!";
+    tick = setInterval(update, 60);
+  }
+
+  function update(){
+    const el = (performance.now() - tStart) / 1000;
+    if (mode === "gps"){
+      lvA.textContent = nf(gpsMax, 1); lvB.textContent = nf(gpsNow, 1);
+      tapCount.textContent = nf(gpsMax,1) + " km/h máx.";
+      tapTime.textContent = fmtTime(el);
+      return;
+    }
+    const n = mode === "tap" ? taps : steps;
+    const rate = el > 0.3 ? n / el : 0;
+    lvA.textContent = nf(rate, 1);
+    lvB.textContent = nf(rate * strideM * 3.6, 1);
+    tapCount.textContent = n + (mode === "tap" ? " toques" : " pasos");
+    tapTime.textContent = nf(Math.max(DUR[mode] - el, 0), 1) + " s";
+    if (el >= DUR[mode]) stop(false);
+  }
+
+  function stop(abort){
+    if (!running && !abort) return;
+    running = false;
+    clearInterval(tick); tick = null;
+    clearTimeout(motionWatch);
+    window.removeEventListener("devicemotion", onMotion);
+    if (gpsId !== null){ navigator.geolocation.clearWatch(gpsId); gpsId = null; }
+    tapBtn.classList.remove("live");
+    tapBtn.textContent = abort ? "Medir" : "Otra vez";
+    if (abort) return;
+
+    const el = (performance.now() - tStart) / 1000;
+    let kmh, detalle;
+    if (mode === "gps"){
+      kmh = Math.round(gpsMax * 10) / 10;
+      detalle = `Tu máxima medida por GPS en ${fmtTime(el)}.`;
+    } else {
+      const n = mode === "tap" ? taps : steps;
+      const rate = n / Math.max(el, 0.1);
+      kmh = Math.round(rate * strideM * 3.6 * 10) / 10;
+      detalle = `${n} ${mode === "tap" ? "toques" : "pasos"} en ${nf(el,1)} s (${nf(rate,1)}/s) × ${nf(strideM,2)} m de zancada.`;
+    }
+    verdict(kmh, detalle);
+    say(COPY[mode]);
+  }
+
+  function verdict(kmh, detalle){
+    mySpeedEl.textContent = fmtSpeed(kmh) + " km/h";
+    if (!(kmh > 0)){
+      beatMsg.textContent = "Cero movimiento, cero velocidad. Te gana hasta la estrella de mar.";
+      beatList.innerHTML = ""; return;
+    }
+    const perdio = DATA.filter(d => d.kmh < kmh);
+    const siguiente = [...DATA].reverse().find(d => d.kmh >= kmh);
+    beatMsg.innerHTML = detalle + ` Le ganas a <b>${perdio.length}</b> de los ${DATA.length}.` +
+      (siguiente ? ` El siguiente: ${siguiente.nombre.toLowerCase()} ${siguiente.emoji}, a ${fmtSpeed(siguiente.kmh)} km/h.` : " Le ganaste a todos: algo está mal calibrado.");
+    beatList.innerHTML = perdio.slice(-4).reverse().map(d => `<li>${d.nombre} ${d.emoji} · ${fmtSpeed(d.kmh)} km/h</li>`).join("");
+
+    if (me){ const i = lanes.indexOf(me); if (i >= 0) lanes.splice(i,1); }
+    me = {nombre:"Tú", kmh: Math.max(kmh, 0.05), medio:"tierra", clase:"humano", emoji:"🏃‍♂️", tu:true};
+    if (lanes.length >= 6) lanes.shift();
+    lanes.push(me); lanes.sort((a,b) => b.kmh - a.kmh);
+    drawLanes(); render();
+  }
+
+  document.getElementById("modes").addEventListener("click", e => {
+    const b = e.target.closest(".mode"); if (b){ setMode(b.dataset.mode); b.blur(); }
+  });
+  strideIn.addEventListener("input", e => {
+    strideM = +e.target.value; strideVal.textContent = nf(strideM, 2);
+  });
+  tapBtn.addEventListener("click", () => {
+    if (mode === "tap"){ if (!running) start(); return; }   // los toques los cuenta pointerdown
+    running ? stop(false) : start();
+  });
+  tapBtn.addEventListener("pointerdown", e => { if (running && mode === "tap"){ e.preventDefault(); taps++; blip(320 + Math.random()*60, null, 0.04, 0.09); } });
+  document.addEventListener("keydown", e => {
+    if (e.code !== "Space" || mode !== "tap") return;
+    const a = document.activeElement;
+    if (a && /^(input|select|textarea)$/i.test(a.tagName)) return;
+    e.preventDefault();
+    if (!running) start(); else { taps++; blip(320 + Math.random()*60, null, 0.04, 0.09); }
+  });
+  setMode("motion");
+
+  /* ---------------- arranque ---------------- */
+  ["Halcón peregrino","Guepardo","Usain Bolt","Caracol"].forEach(n => {
+    const d = DATA.find(x => x.nombre === n); if (d) lanes.push(d);
+  });
+  lanes.sort((a,b) => b.kmh - a.kmh);
+  fillTable(); drawLanes(); render();
+  window.addEventListener("resize", () => drawAxis());
+})();
+</script>
+
+</body>
+</html>
